@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lost in the Forest</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+      background-size: cover;
+      background-position: center;
+      transition: background-image 1s ease;
+    }
+    .container {
+      text-align: center;
+      padding: 50px;
+      color: rgb(30, 219, 244);
+    }
+    button {
+      margin: 10px;
+      padding: 10px 20px;
+      font-size: 16px;
+      background-color: #4CAF50;
+      border: none;
+      color: rgb(212, 236, 170);
+      cursor: pointer;
+      border-radius: 5px;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Lost in the Forest</h1>
+    <p>You find yourself deep in a mysterious forest. Which path will you choose?</p>
+    <button id="path1">Take the left path</button>
+    <button id="path2">Take the right path</button>
+    <button id="path3">Go straight ahead</button>
+    <p id="result"></p>
+  </div>
+
+  <script>
+    document.getElementById("path1").onclick = function() { choosePath(1); };
+    document.getElementById("path2").onclick = function() { choosePath(2); };
+    document.getElementById("path3").onclick = function() { choosePath(3); };
+
+    function choosePath(choice) {
+      let result = document.getElementById('result');
+      let imagePath;
+      if (choice === 1) {
+        result.textContent = "You chose the left path. You come across a tranquil pond.";
+        imagePath = "pond.png";
+      } else if (choice === 2) {
+        result.textContent = "You chose the right path. You stumble upon a hidden cave.";
+        imagePath = "Cave.png";
+      } else if (choice === 3) {
+        result.textContent = "You chose to go straight ahead. You encounter a mystical garden.";
+        imagePath = "grass.png";
+      }
+      document.body.style.backgroundImage = 'url(`${imagePath}`)';
+    }
+  </script>
+</body>
+</html>
