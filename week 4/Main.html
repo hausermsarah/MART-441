@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lost in the Forest</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+      background-size: cover;
+      background-position: center;
+      transition: background-image 1s ease;
+    }
+    .container {
+      text-align: center;
+      padding: 50px;
+      color: rgb(3, 3, 3);
+    }
+    button {
+      margin: 10px;
+      padding: 10px 20px;
+      font-size: 16px;
+      background-color: #4CAF50;
+      border: none;
+      color: rgb(212, 236, 170);
+      cursor: pointer;
+      border-radius: 5px;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Lost in the Forest</h1>
+    <p>You find yourself deep in a mysterious forest. What will you do?</p>
+    <button id="startButton" onclick="startStory()">Start</button>
+    <p id="result"></p>
+  </div>
+
+  <script>
+    let currentScene = 0;
+
+    function startStory() {
+      currentScene = 1;
+      renderScene();
+    }
+
+    function renderScene() {
+      let result = document.getElementById('result');
+      let imagePath;
+
+      switch (currentScene) {
+        case 1:
+          result.textContent = "You come across a fork in the path. Which way do you go?";
+          document.getElementById('startButton').style.display = 'none';
+          document.getElementById('result').innerHTML += `
+            <button onclick="makeChoice(1)">Take the left path</button>
+            <button onclick="makeChoice(2)">Take the right path</button>
+            <button onclick="makeChoice(3)">Go straight ahead</button>
+          `;
+          break;
+        case 2:
+          result.textContent = "You chose the left path. You find an old abandoned cabin. Do you enter or keep going?";
+          document.getElementById('result').innerHTML = '';
+          document.getElementById('result').innerHTML += `
+            <button onclick="makeChoice(1)">Enter the cabin</button>
+            <button onclick="makeChoice(2)">Keep going</button>
+          `;
+          break;
+        case 3:
+          result.textContent = "You cautiously enter the cabin. Inside, you find a chest. Do you open it?";
+          document.getElementById('result').innerHTML = '';
+          document.getElementById('result').innerHTML += `
+            <button onclick="makeChoice(1)">Open the chest</button>
+            <button onclick="makeChoice(2)">Don't open it</button>
+          `;
+          break;
+        case 4:
+          result.textContent = "You chose not to open the chest. You continue deeper into the forest.";
+          document.getElementById('result').innerHTML = '';
+          document.getElementById('result').innerHTML += `
+            <button onclick="makeChoice(1)">Keep going</button>
+          `;
+          break;
+        case 5:
+          result.textContent = "You chose to open the chest. You find a map inside. Where do you go now?";
+          document.getElementById('result').innerHTML = '';
+          document.getElementById('result').innerHTML += `
+            <button onclick="makeChoice(1)">Follow the map</button>
+            <button onclick="makeChoice(2)">Ignore the map</button>
+          `;
+          break;
+        default:
+          result.textContent = "You reach the end of the story. Do you want to restart?";
+          document.getElementById('result').innerHTML = '';
+          document.getElementById('result').innerHTML += `
+            <button onclick="restartStory()">Restart</button>
+          `;
+          break;
+      }
+
+      if (currentScene === 1) {
+        imagePath = "path.png";
+      } else if (currentScene === 2 || currentScene === 4) {
+        imagePath = "forest.png";
+      } else if (currentScene === 3 || currentScene === 5) {
+        imagePath = "cabin.png";
+      } else {
+        imagePath = "ending.png";
+      }
+
+      document.body.style.backgroundImage = `url('${imagePath}')`;
+    }
+
+    function makeChoice(choice) {
+      switch (currentScene) {
+        case 1:
+          currentScene = choice + 1;
+          break;
+        case 3:
+          if (choice === 1) {
+            currentScene = 5;
+          } else {
+            currentScene = 4;
+          }
+          break;
+        default:
+          currentScene = 0;
+          break;
+      }
+
+      renderScene();
+    }
+
+    function restartStory() {
+      currentScene = 0;
+      renderScene();
+    }
+  </script>
+</body>
+</html>
