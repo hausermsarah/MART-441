@@ -16,7 +16,7 @@
     .container {
       text-align: center;
       padding: 50px;
-      color: rgb(30, 219, 244);
+      color: rgb(3, 3, 3);
     }
     button {
       margin: 10px;
@@ -104,13 +104,13 @@
       }
 
       if (currentScene === 1) {
-        imagePath = "path.jpg";
+        imagePath = "path.png";
       } else if (currentScene === 2 || currentScene === 4) {
-        imagePath = "forest.jpg";
+        imagePath = "forest.png";
       } else if (currentScene === 3 || currentScene === 5) {
-        imagePath = "cabin.jpg";
+        imagePath = "cabin.png";
       } else {
-        imagePath = "ending.jpg";
+        imagePath = "ending.png";
       }
 
       document.body.style.backgroundImage = `url('${imagePath}')`;
