@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Memory Matching Game</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #e792ed; 
+    }
+    .header {
+        text-align: center;
+        font-size: 24px;
+        margin-bottom: 20px;
+        font-family: "Times New Roman", Times, serif; 
+        color: #333; 
+    }
+    .container {
+        display: grid;
+        grid-template-columns: repeat(4, 120px); 
+        grid-template-rows: repeat(3, 120px); 
+        gap: 10px;
+        justify-content: center;
+        background-color: white; 
+        padding: 20px; 
+        border-radius: 10px; 
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); 
+    }
+    img {
+        width: 120px;
+        height: 120px;
+        border: 2px solid black;
+        cursor: pointer;
+    }
+    #message {
+        text-align: center;
+        font-size: 20px;
+        margin-top: 20px;
+        display: none; 
+    }
+</style>
+</head>
+<body>
+<div class="header">MEMORY MATCHING GAME</div> 
+<div class="container" id="container"></div>
+<div id="message">YOU WON!</div> 
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+
+    function gatherPlayerInfo(event) {
+        event.preventDefault();
+        const firstName = document.getElementById("firstName").value;
+        const lastName = document.getElementById("lastName").value;
+        const age = document.getElementById("age").value;
+
+        const playerData = {
+            firstName: firstName,
+            lastName: lastName,
+            age: age,
+            attempts: 0
+        };
+
+        localStorage.setItem("playerData", JSON.stringify(playerData));
+       // window.location.href = "memorygame.html"; 
+    }
+
+    
+    const playerData = localStorage.getItem("playerData");
+    if (!playerData) {
+        
+        console.log("Player data not found. Displaying form...");
+        const playerInfoForm = document.createElement("form");
+        playerInfoForm.id = "playerInfoForm";
+        playerInfoForm.addEventListener("submit", gatherPlayerInfo);
+
+        playerInfoForm.innerHTML = `
+            <label for="firstName">First Name:</label>
+            <input type="text" id="firstName" required><br><br>
+            <label for="lastName">Last Name:</label>
+            <input type="text" id="lastName" required><br><br>
+            <label for="age">Age:</label>
+            <input type="number" id="age" required><br><br>
+            <button type="submit">Start Game</button>
+        `;
+        
+        document.body.appendChild(playerInfoForm);
+    } else {
+        
+        console.log("Player data found. Redirecting to memory game...");
+        //window.location.href = "memorygame.html";
+    }
+});
+
+function shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+}
+
+function flipCard(card) {
+    card.src = cards[parseInt(card.dataset.index)]; 
+    flippedCards.push(card); 
+    if (flippedCards.length === 2) { 
+        locked = true; 
+        setTimeout(checkMatch, 1000); 
+    }
+}
+
+function checkMatch() {
+    const [card1, card2] = flippedCards;
+    if (card1.src === card2.src) { 
+        flippedCards = []; 
+        checkWin(); 
+    } else { 
+       
+        setTimeout(() => {
+            card1.src = "dog1.png";
+            card2.src = "dog2.png";
+            card3.src = "dog3.png";
+            card4.src = "dog4.png";
+            card5.src = "dog5.png";
+            card6.src = "dog6.png";
+            flippedCards = [];
+            locked = false; 
+        }, 500);
+    }
+    locked = false; 
+}
+
+function checkWin() {
+    const allFlipped = document.querySelectorAll('img[src^="week5\dogs"]').length === 0;
+    if (allFlipped) {
+        document.getElementById('message').style.display = 'block'; 
+    }
+}
+
+const images = ["dog1.png", "dog2.png", "dog3.png", "dog4.png", "dog5.png", "dog6.png"];
+const cards = images.concat(images); 
+shuffleArray(cards); 
+
+let flippedCards = [];
+let locked = false;
+
+const container = document.getElementById("container");
+for (let i = 0; i < cards.length; i++) {
+    const img = document.createElement("img");
+    img.src = "blank.png";
+    img.dataset.index = i; 
+    img.addEventListener("click", function() {
+        if (!locked && !flippedCards.includes(img)) { 
+            flipCard(img);
+        }
+    });
+    container.appendChild(img);
+}
+</script>
+</body>
+</html>
