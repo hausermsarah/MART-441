@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ViewMaster Viewer</title>
+<style>
+  
+    #randomButton {
+        padding: 10px 20px;
+        font-size: 16px;
+        cursor: pointer;
+        background-color: #f8a594;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+    }
+</style>
+</head>
+<body>
+
+<h1>ViewMaster Viewer</h1>
+
+<div id="displayArea">
+    <p><strong>Gustav Klimt:</strong> Gustav Klimt was an Austrian symbolist painter known for his highly decorative style and iconic imagery, which often explored themes of love, sensuality, and the human condition. His innovative use of gold leaf and intricate patterns, combined with his bold compositions, made him one of the most prominent figures of the Vienna Secession movement and a pioneer of modern art.</p>
+    <p>Press the button to view a random object.</p>
+</div>
+
+<button id="randomButton">Show Random Object</button>
+
+<script>
+ 
+    class ViewMasterViewer {
+        constructor(title, image, description, author, imageYear) {
+            this.title = title;
+            this.image = image;
+            this.description = description;
+            this.author = author;
+            this.imageYear = imageYear;
+        }
+    }
+
+   
+    const objects = [
+        new ViewMasterViewer("The Kiss", "https://www.uniquearts.ltd.uk/item/images/59924/1700x1700/P44918-59924.jpg", "An iconic painting by Gustav Klimt, portraying a couple locked in a tender embrace, surrounded by vibrant colors and intricate patterns.", "Gustav Klimt", "1907-1908"),
+        new ViewMasterViewer("The Women in Gold", "https://i.pinimg.com/originals/17/bb/d0/17bbd06c1f488162e701729f4f2fe16e.jpg", "A portrait by Gustav Klimt, also known as 'Portrait of Adele Bloch-Bauer I,' featuring a woman adorned in gold, symbolizing opulence and luxury.", "Gustav Klimt", "1907"),
+        new ViewMasterViewer("Mother and Child", "https://www.arttablo.com/upload/U-gustav-klimt-mother-and-child-anne-ve-cocuk-2-bas-yapit-klasik-sanat-kanvas-tablo1509743158-800.jpg", "Gustav Klimt's portrayal of the bond between a mother and her child, captured in vibrant colors and flowing lines, evoking warmth and tenderness.", "Gustav Klimt", "1905"),
+        new ViewMasterViewer("Judith and the Head of Holofernes", "https://th.bing.com/th/id/R.a523316cbaf1e3135173e8f0af178e43?rik=4M%2fll2jNyqq0oQ&riu=http%3a%2f%2f1.bp.blogspot.com%2f_8G6VfbRQs9c%2fTLYY9Mn02jI%2fAAAAAAAAA3A%2f6i80pOjTd0U%2fs1600%2f1.15.Judith.Klimt_1901.jpg&ehk=SM834%2fvx%2bIkP5LDiBAnraGlPRSKYp86ZuAy%2fycn6Xnw%3d&risl=&pid=ImgRaw&r=0", "A powerful painting by Gustav Klimt, depicting the biblical heroine Judith holding the severed head of Holofernes, symbolizing courage and triumph over oppression.", "Gustav Klimt", "1901"),
+        new ViewMasterViewer("The Tree of Life", "https://img1.etsystatic.com/052/1/9237953/il_570xN.739293103_s1rf.jpg", "Gustav Klimt's representation of the interconnectedness of all living beings, depicted through intricate patterns and symbolism, reflecting the cyclical nature of existence.", "Gustav Klimt", "1909")
+    ];
+
+    
+    function displayRandomObject() {
+        const randomObject = objects[Math.floor(Math.random() * objects.length)];
+        const displayArea = document.getElementById("displayArea");
+        displayArea.innerHTML = `
+            <h2>${randomObject.title}</h2>
+            <img src="${randomObject.image}" alt="${randomObject.title}">
+            <p><strong>Description:</strong> ${randomObject.description}</p>
+            <p><strong>Author:</strong> ${randomObject.author}</p>
+            <p><strong>Image Year:</strong> ${randomObject.imageYear}</p>
+        `;
+    }
+
+   
+    document.getElementById("randomButton").addEventListener("click", displayRandomObject);
+</script>
+
+</body>
+</html>
