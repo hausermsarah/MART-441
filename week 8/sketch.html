@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fading Images and Moving Shapes</title>
+  <style>
+    #container {
+      position: relative;
+      width: 800px;
+      height: 400px;
+      margin: 0 auto;
+    }
+    .shape {
+      position: absolute;
+      width: 50px;
+      height: 50px;
+      background-color: rgb(219, 240, 79);
+      border-radius: 50%;
+    }
+    #container img {
+      width: 400px; 
+      height: auto; 
+      display: block;
+    }
+  </style>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script>
+    $(document).ready(function() {
+      var images = ['dog1.png', 'dog2.png', 'dog3.png'];
+      var texts = ['Mans best friend', 'CUTEEE', 'I love dogs'];
+      var currentIndex = 0;
+
+      function fadeOutIn() {
+        $('#container img').fadeOut(1000, function() {
+          $(this).attr('src', images[currentIndex]).fadeIn(1000);
+        });
+        $('#text').fadeOut(1000, function() {
+          $(this).text(texts[currentIndex]).fadeIn(1000);
+        });
+        currentIndex = (currentIndex + 1) % images.length;
+      }
+
+      function moveShapes() {
+        $('.shape').each(function() {
+          var newX = Math.random() * ($('#container').width() - $(this).width());
+          var newY = Math.random() * ($('#container').height() - $(this).height());
+          $(this).animate({
+            left: newX,
+            top: newY
+          }, 2000);
+        });
+      }
+
+      fadeOutIn(); 
+      setInterval(fadeOutIn, 5000);
+      setInterval(moveShapes, 3000);
+    });
+  </script>
+</head>
+<body>
+  <div id="container">
+    <img src="dog1.png" alt="Image">
+    <p id="text"></p>
+    <div class="shape" style="left: 100px; top: 100px;"></div>
+    <div class="shape" style="left: 200px; top: 200px;"></div>
+    <div class="shape" style="left: 300px; top: 300px;"></div>
+  </div>
+</body>
+</html>
