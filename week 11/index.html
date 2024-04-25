@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Canvas</title>
+    <style>
+        canvas {
+            border: 2px solid black; 
+        }
+    </style>
+</head>
+<body>
+    <canvas id="myCanvas" width="600" height="400"></canvas>
+    <button id="startButton">Start</button>
+
+    <script>
+        var audio; // Declare audio variable outside the function scope
+
+        function startBackgroundMusic() {
+            audio = new Audio('loop.wav');
+            audio.loop = true;
+            audio.volume = 0.5; 
+            audio.play();
+            // Remove the button after starting the music
+            document.getElementById('startButton').remove();
+        }
+
+        var canvas = document.getElementById("myCanvas");
+        var ctx = canvas.getContext("2d");
+
+        class GameObject {
+            constructor(x, y, radius, color, dx, dy) {
+                this.x = x;
+                this.y = y;
+                this.radius = radius;
+                this.color = color;
+                this.dx = dx;
+                this.dy = dy;
+            }
+
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.fillStyle = this.color;
+                ctx.fill();
+                ctx.closePath();
+            }
+
+            update() {
+                this.x += this.dx;
+                this.y += this.dy;
+
+                if (this.x + this.radius > canvas.width || this.x - this.radius < 0) {
+                    this.dx = -this.dx;
+                }
+                if (this.y + this.radius > canvas.height || this.y - this.radius < 0) {
+                    this.dy = -this.dy;
+                }
+            }
+        }
+
+        var userObject = new GameObject(100, 100, 20, "blue", 0, 0);
+        var autonomousObject = new GameObject(300, 200, 30, "red", 2, 2);
+
+        document.addEventListener("keydown", function(event) {
+            if (event.key === "ArrowRight") {
+                userObject.dx = 2;
+            } else if (event.key === "ArrowLeft") {
+                userObject.dx = -2;
+            } else if (event.key === "ArrowUp") {
+                userObject.dy = -2;
+            } else if (event.key === "ArrowDown") {
+                userObject.dy = 2;
+            }
+        });
+
+        document.addEventListener("keyup", function(event) {
+            if (event.key === "ArrowRight" || event.key === "ArrowLeft") {
+                userObject.dx = 0;
+            } else if (event.key === "ArrowUp" || event.key === "ArrowDown") {
+                userObject.dy = 0;
+            }
+        });
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            userObject.draw();
+            userObject.update();
+
+            autonomousObject.draw();
+            autonomousObject.update();
+
+            var dx = autonomousObject.x - userObject.x;
+            var dy = autonomousObject.y - userObject.y;
+            var distance = Math.sqrt(dx * dx + dy * dy);
+
+            if (distance < autonomousObject.radius + userObject.radius) {
+                canvas.style.background = "yellow";
+                userObject.radius += 5;
+                autonomousObject.radius += 5;
+            } else {
+                canvas.style.background = "white";
+                userObject.radius = 20;
+                autonomousObject.radius = 30;
+            }
+
+            requestAnimationFrame(draw);
+        }
+
+        // Start background music when the "Start" button is clicked
+        document.getElementById("startButton").addEventListener("click", startBackgroundMusic);
+
+        draw(); 
+    </script>
+</body>
+</html>
