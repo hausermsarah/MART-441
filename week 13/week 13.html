@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Phaser Game</title>
+    <script src="https://cdn.jsdelivr.net/npm/phaser@3.60.0/dist/phaser.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background-color: #87CEEB; 
+        }
+    </style>
+</head>
+<body>
+
+<script>
+    var config = {
+        type: Phaser.AUTO,
+        width: 800,
+        height: 600,
+        physics: {
+            default: 'arcade',
+            arcade: {
+                gravity: { y: 500 },
+                debug: false
+            }
+        },
+        scene: {
+            preload: preload,
+            create: create,
+            update: update, 
+        }
+    };
+
+    var game = new Phaser.Game(config);
+
+    function preload() {
+        this.load.image('sky', 'assets/sky.jpg');
+        this.load.image('ground', 'assets/platform.png');
+        this.load.image('star', 'assets/star.png');
+        this.load.image('spike', 'assets/spike.png');
+    }
+
+    function create() {
+        this.add.image(400, 300, 'sky');
+
+        platforms = this.physics.add.staticGroup();
+        platforms.create(400, 568, 'ground').setScale(2).refreshBody().setSize(800, 32, true);
+
+        player = createPlayer(this);
+
+        this.physics.add.collider(player, platforms);
+
+        cursors = this.input.keyboard.createCursorKeys();
+        spacebar = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
+
+        WKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W);
+        AKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
+        SKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S);
+        DKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
+
+        createStars(this); 
+        createSpikes(this); 
+    }
+
+    function createStars(scene) {
+        stars = scene.physics.add.group({
+            key: 'star',
+            repeat: 4,
+            setXY: { x: 100, y: 0, stepX: 150 }
+        });
+
+        stars.children.iterate(function (child) {
+            child.setBounceY(Phaser.Math.FloatBetween(0.4, 0.8));
+            child.setScale(0.05);
+            child.body.gravity.y = 300; 
+        });
+
+        scene.physics.add.collider(stars, platforms);
+        scene.physics.add.overlap(player, stars, collectStar, null, scene);
+    }
+
+    function createPlayer(scene) {
+        player = scene.add.rectangle(100, 450, 32, 32, 0xff0000); 
+        scene.physics.add.existing(player); 
+        player.body.setBounce(0.2);
+        player.body.setCollideWorldBounds(true);
+
+        return player;
+    }
+
+    function createSpikes(scene) {
+        spikes = scene.physics.add.group();
+
+        var groundWidth = 800; 
+        var minSpikeDistance = 10; 
+        var numSpikes = 3; 
+        var spikePositions = []; 
+
+        for (var i = 0; i < numSpikes; i++) {
+            var spikeX = Phaser.Math.Between(0, groundWidth);
+            var spikeY = 600; 
+
+            while (Phaser.Math.Distance.Between(spikeX, spikeY, player.x, player.y) < 100) {
+                spikeX = Phaser.Math.Between(0, groundWidth);
+            }
+
+            var validPosition = false;
+            while (!validPosition) {
+                var overlapping = false;
+                for (var j = 0; j < spikePositions.length; j++) {
+                    if (Phaser.Math.Distance.Between(spikeX, spikeY, spikePositions[j].x, spikePositions[j].y) < minSpikeDistance) {
+                        overlapping = true;
+                        break;
+                    }
+                }
+                if (!overlapping) {
+                    validPosition = true;
+                } else {
+                    spikeX = Phaser.Math.Between(0, groundWidth);
+                    spikeY = 600; 
+                }
+            }
+
+            spikePositions.push({ x: spikeX, y: spikeY });
+
+            var spike = spikes.create(spikeX, spikeY, 'spike');
+            spike.setOrigin(0.5, 1); 
+            resizeSpike(spike); 
+
+            spike.body.setAllowGravity(false);
+            spike.body.setImmovable(true);
+        }
+
+        scene.physics.add.collider(spikes, platforms);
+        scene.physics.add.collider(player, spikes, hitSpike, null, scene);
+    }
+
+    function resizeSpike(spike) {
+        spike.setScale(0.3);
+        spike.body.setSize(spike.displayWidth, spike.displayHeight * 0.5, true); 
+        spike.body.setOffset(0, spike.displayHeight * (1 - spike.scaleY)); 
+    }
+
+    function update() {
+        if (AKey.isDown) {
+            player.body.setVelocityX(-160);
+        } else if (DKey.isDown) {
+            player.body.setVelocityX(160);
+        } else {
+            player.body.setVelocityX(0);
+        }
+
+        if (spacebar.isDown && player.body.touching.down) {
+            player.body.setVelocityY(-500); 
+
+
+        }
+    }
+
+    function collectStar(player, star) {
+        star.disableBody(true, true);
+
+        if (stars.countActive(true) === 0) {
+            this.add.text(400, 300, 'Level Complete!', { fontSize: '32px', fill: '#fff' }).setOrigin(0.5);
+            nextLevelButton = this.add.text(400, 350, 'Next Level', { fontSize: '24px', fill: '#fff' }).setOrigin(0.5);
+            nextLevelButton.setInteractive();
+            nextLevelButton.on('pointerdown', function () {
+                location.reload();
+            });
+        }
+    }
+
+    function hitSpike(player, spike) {
+        this.add.text(400, 300, 'Fail!', { fontSize: '32px', fill: '#fff' }).setOrigin(0.5);
+        retryButton = this.add.text(400, 350, 'Retry', { fontSize: '24px', fill: '#fff' }).setOrigin(0.5);
+        retryButton.setInteractive();
+        retryButton.on('pointerdown', function () {
+            location.reload();
+        });
+    }
+</script>
+</body>
+</html>
