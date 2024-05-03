@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Three.js Project</title>
+    <style>
+        body { margin: 0; }
+        canvas { display: block; }
+    </style>
+</head>
+<body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script>
+        
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+
+          
+          const textureLoader = new THREE.TextureLoader();
+        const backgroundTexture = textureLoader.load('background.jpg'); 
+        scene.background = backgroundTexture;
+
+        
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 1); 
+        directionalLight.position.set(-1, 1, 1);
+        scene.add(directionalLight);
+
+        const directionalLightBottom = new THREE.DirectionalLight(0xffffff, 0.5); 
+        directionalLightBottom.position.set(0, -1, 0);
+        scene.add(directionalLightBottom);
+
+        
+        const geometry1 = new THREE.BoxGeometry();
+        const material1 = new THREE.MeshPhongMaterial({ color: 0xFCBEC8 }); 
+        const cube1 = new THREE.Mesh(geometry1, material1);
+        cube1.position.x = -2;
+        scene.add(cube1);
+
+        const geometry2 = new THREE.SphereGeometry();
+        const material2 = new THREE.MeshPhongMaterial({ color: 0xCBB7FC }); 
+        const sphere1 = new THREE.Mesh(geometry2, material2);
+        sphere1.position.x = 2;
+        scene.add(sphere1);
+
+        
+        const fontLoader = new THREE.FontLoader();
+        fontLoader.load('https://cdn.rawgit.com/mrdoob/three.js/master/examples/fonts/helvetiker_regular.typeface.json', function(font) {
+            const textGeometry = new THREE.TextGeometry('Hello, World!', {
+                font: font,
+                size: 0.5,
+                height: 0.1,
+            });
+            const textMaterial = new THREE.MeshPhongMaterial({ color: 0xffff00 }); 
+            const text = new THREE.Mesh(textGeometry, textMaterial);
+            text.position.y = 2;
+            scene.add(text);
+        });
+
+        function animate() {
+            requestAnimationFrame(animate);
+            cube1.rotation.x += 0.01;
+            cube1.rotation.y += 0.01;
+            sphere1.rotation.x += 0.01;
+            sphere1.rotation.y += 0.01;
+            renderer.render(scene, camera);
+        }
+        animate();
+
+        camera.position.z = 5;
+    </script>
+</body>
+</html>
