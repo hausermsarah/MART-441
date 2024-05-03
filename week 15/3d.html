@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Babylon.js Aesthetic Scene</title>
+    <script src="https://cdn.babylonjs.com/babylon.js"></script>
+    <script src="https://cdn.babylonjs.com/loaders/babylonjs.loaders.min.js"></script>
+    <style>
+        canvas {
+            width: 100%;
+            height: 100%;
+            touch-action: none;
+            background-color: #f5e8dc; 
+        }
+    </style>
+</head>
+<body>
+    <canvas id="renderCanvas"></canvas>
+    <script>
+        var canvas = document.getElementById("renderCanvas");
+        var engine = new BABYLON.Engine(canvas, true);
+
+        var createScene = function () {
+            var scene = new BABYLON.Scene(engine);
+
+        
+            var camera = new BABYLON.ArcRotateCamera("Camera", Math.PI / 2, Math.PI / 2, 5, BABYLON.Vector3.Zero(), scene);
+            camera.attachControl(canvas, true);
+
+         
+            var light = new BABYLON.HemisphericLight("light", new BABYLON.Vector3(0, 1, 0), scene);
+
+        
+            BABYLON.SceneLoader.ImportMesh("", "week 15/rollion.glb", "rollion.glb", scene, function (meshes) {
+                
+                meshes.forEach(function (mesh) {
+                    mesh.material = new BABYLON.StandardMaterial("material", scene);
+                    mesh.material.diffuseColor = new BABYLON.Color3(0.8, 0.9, 1); 
+                    mesh.material.specularColor = new BABYLON.Color3(0.5, 0.5, 0.5);
+                });
+            });
+
+            
+            var box = BABYLON.MeshBuilder.CreateBox("box", { size: 1 }, scene);
+            var sphere = BABYLON.MeshBuilder.CreateSphere("sphere", { diameter: 1 }, scene);
+            var cylinder = BABYLON.MeshBuilder.CreateCylinder("cylinder", { diameter: 1, height: 2 }, scene);
+            var torus = BABYLON.MeshBuilder.CreateTorus("torus", { diameter: 2, thickness: 0.5 }, scene);
+            var plane = BABYLON.MeshBuilder.CreatePlane("plane", { size: 3 }, scene);
+
+            
+            box.material = new BABYLON.StandardMaterial("boxMat", scene);
+            box.material.diffuseColor = new BABYLON.Color3(1, 0.6, 0); 
+            box.material.specularColor = new BABYLON.Color3(0.5, 0.5, 0.5);
+
+            sphere.material = new BABYLON.StandardMaterial("sphereMat", scene);
+            sphere.material.diffuseColor = new BABYLON.Color3(1, 0.8, 0.8); 
+            sphere.material.specularColor = new BABYLON.Color3(0.5, 0.5, 0.5);
+
+            cylinder.material = new BABYLON.StandardMaterial("cylinderMat", scene);
+            cylinder.material.diffuseColor = new BABYLON.Color3(0.8, 0.9, 1); 
+            cylinder.material.specularColor = new BABYLON.Color3(0.5, 0.5, 0.5);
+
+            torus.material = new BABYLON.StandardMaterial("torusMat", scene);
+            torus.material.diffuseColor = new BABYLON.Color3(1, 0.8, 0.8); 
+            torus.material.specularColor = new BABYLON.Color3(0.5, 0.5, 0.5);
+
+            plane.material = new BABYLON.StandardMaterial("planeMat", scene);
+            plane.material.diffuseColor = new BABYLON.Color3(0.8, 0.9, 1); 
+            plane.material.specularColor = new BABYLON.Color3(0.5, 0.5, 0.5);
+
+            
+            var keys = [];
+            keys.push({ frame: 0, value: 0 });
+            keys.push({ frame: 100, value: Math.PI * 2 });
+
+            [box, sphere, cylinder, torus, plane].forEach(function (shape) {
+                var animation = new BABYLON.Animation("animation", "rotation.y", 30, BABYLON.Animation.ANIMATIONTYPE_FLOAT, BABYLON.Animation.ANIMATIONLOOPMODE_CYCLE);
+                animation.setKeys(keys);
+                shape.animations.push(animation);
+                scene.beginAnimation(shape, 0, 100, true);
+            });
+
+            return scene;
+        };
+
+        var scene = createScene();
+
+        engine.runRenderLoop(function () {
+            scene.render();
+        });
+
+        window.addEventListener("resize", function () {
+            engine.resize();
+        });
+    </script>
+</body>
+</html>
