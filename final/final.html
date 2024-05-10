@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Forest Nymph Art</title>
+<style>
+  body {
+    margin: 0;
+    overflow: hidden;
+    background-color: #329972; 
+  }
+</style>
+</head>
+<body>
+<canvas id="forestCanvas"></canvas>
+<script>
+ 
+  const canvas = document.getElementById('forestCanvas');
+  const ctx = canvas.getContext('2d');
+
+  
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+
+ 
+  const nymphColor = '#648046'; 
+  const bgColor = '#81D3BE'; 
+
+
+  let angle = 1;
+
+ 
+  const flowers = [];
+
+
+  for (let i = 0; i < 10; i++) {
+    const x = Math.random() * canvas.width;
+    const y = Math.random() * canvas.height;
+    flowers.push({ x, y });
+  }
+
+
+  function drawFlowers(x, y) {
+    const petalColors = ['#05979B', '#2065A1', '#B12CCC', '#5F5CD8', '#283555']; 
+    const numPetals = 10;
+    const petalRadius = 30;
+
+    for (let i = 0; i < numPetals; i++) {
+      const petalAngle = (Math.PI * 2) / numPetals * i;
+      const petalLength = Math.random() * 20 + 30;
+      const petalX = x + Math.cos(petalAngle) * petalLength;
+      const petalY = y + Math.sin(petalAngle) * petalLength;
+      const controlPointX1 = x + Math.cos(petalAngle - Math.PI / 8) * 10;
+      const controlPointY1 = y + Math.sin(petalAngle - Math.PI / 8) * 10;
+      const controlPointX2 = x + Math.cos(petalAngle + Math.PI / 8) * 10;
+      const controlPointY2 = y + Math.sin(petalAngle + Math.PI / 8) * 10;
+
+      ctx.beginPath();
+      ctx.fillStyle = petalColors[i % petalColors.length];
+      ctx.moveTo(x, y);
+      ctx.bezierCurveTo(controlPointX1, controlPointY1, controlPointX2, controlPointY2, petalX, petalY);
+      ctx.closePath();
+      ctx.fill();
+    }
+
+   
+    ctx.beginPath();
+    ctx.fillStyle = '#D591DF'; 
+    ctx.arc(x, y, 10, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+ 
+  function draw() {
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  
+    ctx.fillStyle = bgColor;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  
+    ctx.beginPath();
+    ctx.fillStyle = nymphColor;
+    ctx.arc(canvas.width / 2, canvas.height / 2, 150, 0, Math.PI * 2);
+    ctx.fill();
+
+    angle += 0.01;
+
+  
+    flowers.forEach((flower) => {
+      const flowerX = flower.x + Math.cos(angle) * 20;
+      const flowerY = flower.y + Math.sin(angle) * 10;
+      drawFlowers(flowerX, flowerY);
+    });
+
+    
+    requestAnimationFrame(draw);
+  }
+
+
+  draw();
+
+</script>
+</body>
+</html>
